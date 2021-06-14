@@ -197,6 +197,7 @@ SingleCharacter = [^\r\n\'\\]
   "begin"                        { return symbol(BEGIN); }
   "end"                          { return symbol(END); }
   "until"                        { return symbol(UNTIL); }
+  "say"                          { return symbol(SAY); }
   
   
   

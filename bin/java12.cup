@@ -88,8 +88,8 @@ terminal WHERE; //where token
 terminal BEGIN; //BEGIN token
 terminal END; //END token
 terminal UNTIL;//UNTIL token
-//
-//
+terminal SAY;//SAY token used for printing what comes next
+///////////////
 terminal PRINT;//print_stmt// a keyword to print "HI THERE"
 terminal CLOCK;//clock_stmt// a keyword to print clock
 terminal LOCATION;//location_stmt// a keyword to print location
@@ -111,6 +111,7 @@ non terminal os_stmt;  // a statement used for OS keyword
 //
 non terminal fur_stmt; // a statement used for fur token
 non terminal during_stmt; // a statement used for during token
+non terminal say_stmt; // a statement used for say token
 ///////////////////
 
 
@@ -976,6 +977,7 @@ my_statement ::=
 		keyword_statement  SEMICOLON
 	|	during_stmt
 	|	fur_stmt
+	|   say_stmt
 	;
 
 ////////////////////
@@ -1014,3 +1016,9 @@ during_stmt ::=
 fur_stmt ::=
 		FUR assignment UNTIL unary_expression WHERE BEGIN statement END
 	;
+/////
+say_stmt ::=
+	SAY COLON STRING_LITERAL:s SEMICOLON {: System.out.println(s); :}
+	;
+		
+		
