@@ -13,6 +13,18 @@ public class TSt_sym {
       print "Bye";
     }
 
+    
+    
+    
+    int x = 3;
+    int y = 2;
+    if (x > y) {
+      for (int i = 0; i < x; i++)
+        print "HELLO WORLD";
+    } else {
+      print "Bye";
+    }
+    
     if (5 > 6) {
       func(1);
     } else {
