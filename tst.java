@@ -11,13 +11,13 @@ public class TSt_sym {
     }
   }
 
-  int x = 3;
+  int x = 5;
   int y = 2;
-  if (x > y) {
-    for (int i = 0; i < x; i++)
-      print "HELLO WORLD";
-  } else {
-    print "Bye";
+  for (int i = 0) {
+    SAY: "HELLO WORLD";
+  }
+  else {
+    SAY: "Bye";
   }
 
   public static void func(int s) {
