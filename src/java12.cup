@@ -1011,10 +1011,11 @@ os_stmt ::=
 /////////////
 /////////////
 during_stmt ::=
-		DURING conditional_expression WHERE BEGIN statement:s END
+		DURING conditional_expression WHERE BEGIN block_statements_opt END
 	;
 fur_stmt ::=
-		FUR IDENTIFIER EQ INTEGER_LITERAL:b UNTIL IDENTIFIER:e WHERE BEGIN block_statements_opt END {:Main.loop(b,e);:}
+		FUR IDENTIFIER EQ INTEGER_LITERAL:b UNTIL IDENTIFIER:e WHERE BEGIN block_statements_opt
+		END {:Main.loop(b,e);:}
 	;
 /////
 say_stmt ::=

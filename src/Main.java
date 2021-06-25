@@ -4,13 +4,12 @@ import java.util.List;
 public class Main {
 	public static int x = 0;
 	public static int y = 0;
-	public static int iterator;
+	public static int iterator=0;
 	public static int end = 0;
 	public static int comp = 0;
 	public static String str1;
 	public static String str2;
 
-	public static List<Integer> pointers = new ArrayList<Integer>();
 
 	public static void main(String[] argv) {
 		JavaParser.main(argv);
@@ -26,7 +25,7 @@ public class Main {
 			end = y;
 
 		while (iterator < end) {
-			if (comp >= 0) {
+			if (comp > -1) {
 				System.out.println(str1);
 			} else if (str2 != null) {
 				System.out.println(str2);
