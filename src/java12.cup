@@ -307,7 +307,7 @@ goal ::=	compilation_unit
 	;
 
 // 19.3) Lexical Structure.
-literal ::=	INTEGER_LITERAL
+literal ::=	INTEGER_LITERAL:i {:RESULT=i;:}
 	|	FLOATING_POINT_LITERAL
 	|	BOOLEAN_LITERAL
 	|	CHARACTER_LITERAL
@@ -352,10 +352,10 @@ array_type ::=	primitive_type dims
 	;
 
 // 19.5) Names
-name	::=	simple_name
+name	::=	simple_name:n {:RESULT=n;:}
 	|	qualified_name
 	;
-simple_name ::=	IDENTIFIER
+simple_name ::=	IDENTIFIER:i  {:RESULT=i;:}
 	;
 qualified_name ::=
 		name DOT IDENTIFIER
@@ -466,14 +466,14 @@ variable_declarators ::=
 	;
 variable_declarator ::=
 		variable_declarator_id
-	|	variable_declarator_id EQ variable_initializer
+	|	variable_declarator_id:id EQ variable_initializer:val {:Main.assign(id,val);:}
 	;
 variable_declarator_id ::=
-		IDENTIFIER
+		IDENTIFIER:id {:RESULT=id;:}
 	|	variable_declarator_id LBRACK RBRACK
 	;
 variable_initializer ::=
-		expression
+		expression:val {:RESULT=val;:}
 	|	array_initializer
 	;
 
@@ -592,19 +592,19 @@ variable_initializers ::=
 	;
 
 // 19.11) Blocks and Statements
-block ::=	LBRACE block_statements_opt RBRACE
+block ::=	LBRACE block_statements_opt:s RBRACE {: RESULT = s;:}
 	;
 
 block_statements_opt ::=
-	|	block_statements
+	|	block_statements:s {: RESULT = s; :}
 	;
 block_statements ::=
-		block_statement
+		block_statement:s {: RESULT = s ;:}
 	|	block_statements block_statement
 	;
 block_statement ::=
 		local_variable_declaration_statement
-	|	statement
+	|	statement:s {: RESULT = s; :}
 	|	class_declaration
 	|	interface_declaration
 	;
@@ -615,23 +615,23 @@ local_variable_declaration ::=
 		type variable_declarators
 	|	FINAL type variable_declarators
 	;
-statement ::=	statement_without_trailing_substatement
+statement ::=	statement_without_trailing_substatement:s {: RESULT = s;:}
 	|	labeled_statement
 	|	if_then_statement
 	|	if_then_else_statement
 	|	while_statement
 	|	for_statement
-	|   my_statement
+	|   my_statement:s {: RESULT = s; :}
 	;
 statement_no_short_if ::=
-		statement_without_trailing_substatement
+		statement_without_trailing_substatement:s {: RESULT = s; :}
 	|	labeled_statement_no_short_if
 	|	if_then_else_statement_no_short_if
 	|	while_statement_no_short_if
 	|	for_statement_no_short_if
 	;
 statement_without_trailing_substatement ::=
-		block
+		block:s {: RESULT = s; :}
 	|	empty_statement
 	|	expression_statement
 	|	switch_statement
@@ -668,8 +668,8 @@ if_then_statement ::=
 		IF LPAREN expression RPAREN statement
 	;
 if_then_else_statement ::=
-		IF LPAREN expression RPAREN statement_no_short_if 
-			ELSE statement
+		IF LPAREN expression:e RPAREN statement_no_short_if:s1 
+			ELSE statement:s2 {:Main.condition(e,s1,s2);:}
 	;
 if_then_else_statement_no_short_if ::=
 		IF LPAREN expression RPAREN statement_no_short_if
@@ -770,11 +770,11 @@ finally ::=	FINALLY block
 	;
 
 // 19.12) Expressions
-primary ::=	primary_no_new_array
+primary ::=	primary_no_new_array:val {:RESULT=val;:}
 	|	array_creation_expression
 	;
 primary_no_new_array ::=
-		literal
+		literal:val {:RESULT=val;:}
 	|	THIS
 	|	LPAREN expression RPAREN
 	|	class_instance_creation_expression
@@ -835,13 +835,13 @@ array_access ::=
 	|	primary_no_new_array LBRACK expression RBRACK
 	;
 postfix_expression ::=
-		primary
-	|	name
+		primary:val {:RESULT=val;:}
+	|	name:n {:RESULT=n;:}
 	|	postincrement_expression
 	|	postdecrement_expression
 	;
 postincrement_expression ::=
-		postfix_expression PLUSPLUS
+		postfix_expression PLUSPLUS 
 	;
 postdecrement_expression ::=
 		postfix_expression MINUSMINUS
@@ -851,16 +851,16 @@ unary_expression ::=
 	|	predecrement_expression
 	|	PLUS unary_expression
 	|	MINUS unary_expression
-	|	unary_expression_not_plus_minus
+	|	unary_expression_not_plus_minus:val {:RESULT=val;:}
 	;
 preincrement_expression ::=
-		PLUSPLUS unary_expression
+		PLUSPLUS unary_expression 
 	;
 predecrement_expression ::=
 		MINUSMINUS unary_expression
 	;
 unary_expression_not_plus_minus ::=
-		postfix_expression
+		postfix_expression:val {:RESULT=val;:}
 	|	COMP unary_expression
 	|	NOT unary_expression
 	|	cast_expression
@@ -871,62 +871,62 @@ cast_expression ::=
 	|	LPAREN name dims RPAREN unary_expression_not_plus_minus
 	;
 multiplicative_expression ::=
-		unary_expression
+		unary_expression:val {:RESULT=val;:}
 	|	multiplicative_expression MULT unary_expression
 	|	multiplicative_expression DIV unary_expression
 	|	multiplicative_expression MOD unary_expression
 	;
 additive_expression ::=
-		multiplicative_expression
+		multiplicative_expression:val {:RESULT=val;:}
 	|	additive_expression PLUS multiplicative_expression
 	|	additive_expression MINUS multiplicative_expression
 	;
 shift_expression ::=
-		additive_expression
+		additive_expression:val {:RESULT=val;:}
 	|	shift_expression LSHIFT additive_expression
 	|	shift_expression RSHIFT additive_expression
 	|	shift_expression URSHIFT additive_expression
 	;
 relational_expression ::=
-		shift_expression
-	|	relational_expression LT shift_expression
-	|	relational_expression GT shift_expression
+		shift_expression:val {:RESULT=val;:}
+	|	relational_expression:l LT shift_expression:g {:RESULT=Main.compare(g,l);:}
+	|	relational_expression:g GT shift_expression:l {:RESULT=Main.compare(g,l);:}
 	|	relational_expression LTEQ shift_expression
 	|	relational_expression GTEQ shift_expression
 	|	relational_expression INSTANCEOF reference_type
 	;
 equality_expression ::=
-		relational_expression
+		relational_expression:val {:RESULT=val;:}
 	|	equality_expression EQEQ relational_expression
 	|	equality_expression NOTEQ relational_expression
 	;
 and_expression ::=
-		equality_expression
+		equality_expression:val {:RESULT=val;:}
 	|	and_expression AND equality_expression
 	;
 exclusive_or_expression ::=
-		and_expression
+		and_expression:val {:RESULT=val;:}
 	|	exclusive_or_expression XOR and_expression
 	;
 inclusive_or_expression ::=
-		exclusive_or_expression
+		exclusive_or_expression:val {:RESULT=val;:}
 	|	inclusive_or_expression OR exclusive_or_expression
 	;
 conditional_and_expression ::=
-		inclusive_or_expression
+		inclusive_or_expression:val {:RESULT=val;:}
 	|	conditional_and_expression ANDAND inclusive_or_expression
 	;
 conditional_or_expression ::=
-		conditional_and_expression
+		conditional_and_expression:val {:RESULT=val;:}
 	|	conditional_or_expression OROR conditional_and_expression
 	;
 conditional_expression ::=
-		conditional_or_expression
+		conditional_or_expression:val {:RESULT=val;:}
 	|	conditional_or_expression QUESTION expression 
 			COLON conditional_expression
 	;
 assignment_expression ::=
-		conditional_expression
+		conditional_expression:val {:RESULT=val;:}
 	|	assignment
 	;
 assignment ::=	left_hand_side assignment_operator assignment_expression
@@ -953,7 +953,7 @@ assignment_operator ::=
 expression_opt ::=
 	|	expression
 	;
-expression ::=	assignment_expression
+expression ::=	assignment_expression:val {:RESULT=val;:}
 	;
 constant_expression ::=
 		expression
@@ -974,16 +974,16 @@ constant_expression ::=
 	
 //////////
 my_statement ::=
-		keyword_statement  SEMICOLON
+		keyword_statement SEMICOLON  
 	|	during_stmt
 	|	fur_stmt
-	|   say_stmt
+	|   say_stmt:s {: RESULT = s; :}
 	;
 
 ////////////////////
 //////////
 keyword_statement ::=
-	 	print_stmt
+	 	print_stmt:s {: RESULT = s; :}
 	|	clock_stmt
 	|	location_stmt
 	|	username_stmt
@@ -991,7 +991,7 @@ keyword_statement ::=
 	;
 	
 print_stmt ::=
-		PRINT {: System.out.println("PRINT: HI THERE"); :}
+		PRINT {:System.out.println("PRINT: HI THERE :)");:}
 	;
 clock_stmt ::=
 		CLOCK {:String timeStamp = new java.text.SimpleDateFormat("HH:mm:ss")
@@ -1011,14 +1011,14 @@ os_stmt ::=
 /////////////
 /////////////
 during_stmt ::=
-		DURING conditional_expression WHERE BEGIN statement END
+		DURING conditional_expression WHERE BEGIN statement:s END
 	;
 fur_stmt ::=
-		FUR assignment UNTIL unary_expression WHERE BEGIN statement END
+		FUR IDENTIFIER EQ INTEGER_LITERAL:b UNTIL IDENTIFIER:e WHERE BEGIN statement END {:Main.loop(b,e);:}
 	;
 /////
 say_stmt ::=
-	SAY COLON STRING_LITERAL:s SEMICOLON {: System.out.println(s); :}
+	SAY COLON STRING_LITERAL:s SEMICOLON {: RESULT = s; :}
 	;
 		
 		
