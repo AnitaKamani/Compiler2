@@ -26,13 +26,13 @@ public class Main {
 			end = y;
 
 		while (iterator < end) {
-			if (comp > 0) {
+			if (comp >= 0) {
 				System.out.println(str1);
 			} else if (str2 != null) {
 				System.out.println(str2);
 			}
 			iterator++;
-			comp--;
+			comp++;
 		}
 	}
 
